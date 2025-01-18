@@ -1,5 +1,5 @@
-(ns hyperlith.session
-  (:require [hyperlith.util :as u]))
+(ns hyperlith.impl.session
+  (:require [hyperlith.impl.util :as u]))
 
 (defn get-sid [req]
   (some->> (get-in req [:headers "cookie"])

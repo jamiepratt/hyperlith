@@ -29,6 +29,8 @@
 (defn -main [& _]
   (l/start-app {:routes routes}))
 
+;; csrf
+
 (comment
   (def serv (-main))
   ;; (clojure.java.browse/browse-url "http://localhost:8080/")

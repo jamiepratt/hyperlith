@@ -1,4 +1,4 @@
-(ns hyperlith.util
+(ns hyperlith.impl.util
   (:require [clojure.data.json :as json]
             [clojure.java.io :as io])
   (:import (java.io ByteArrayOutputStream)

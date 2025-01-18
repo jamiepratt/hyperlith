@@ -1,7 +1,7 @@
 (ns hyperlith.core
-  (:require [hyperlith.util :as u]
-            [hyperlith.session :refer [wrap-session]]
-            [hyperlith.headers :refer [default-headers]]
+  (:require [hyperlith.impl.util :as u]
+            [hyperlith.impl.session :refer [wrap-session]]
+            [hyperlith.impl.headers :refer [default-headers]]
             [hiccup2.core :as h]
             [clojure.java.io :as io]
             [org.httpkit.server :as hk]

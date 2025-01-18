@@ -1,4 +1,4 @@
-(ns hyperlith.headers
+(ns hyperlith.impl.headers
   (:require [clojure.string :as str]))
 
 (def self "'self'")
