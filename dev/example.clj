@@ -14,7 +14,7 @@
       (for [message (@state_ :messages)]
         [:p message])
       [:div
-       [:input {:type "text" :data-bind__ifmissing "message"}]]
+       [:input {:type "text" :data-bind "message"}]]
       [:button
        {:data-on-click "@post('/submit'); $message = ''"} "submit"]]]))
 
