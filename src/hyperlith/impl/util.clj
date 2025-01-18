@@ -8,13 +8,8 @@
 
 ;;; - JSON -
 
-(defn json->edn [json]
-  (json/read-str json {:key-fn keyword}))
-
 (defn json-stream->edn [json]
   (-> json io/reader (json/read {:key-fn keyword})))
-
-(def edn->json json/write-str)
 
 ;;; - GZIP -
 

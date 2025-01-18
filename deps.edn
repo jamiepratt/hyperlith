@@ -1,10 +1,22 @@
 {:paths   ["src" "resources"]
  :deps    {org.clojure/clojure   {:mvn/version "1.12.0"}
            org.clojure/data.json {:mvn/version "2.5.1"}
-           http-kit/http-kit ;; http
+           ;; http
+           http-kit/http-kit
            {:git/url "https://github.com/http-kit/http-kit"
             :git/sha "76b869fc34536ad0c43afa9a98d971a0fc32c644"}
-           hiccup/hiccup ;; templating
+           ;; templating
+           hiccup/hiccup
            {:git/url "https://github.com/weavejester/hiccup"
-            :git/sha "24d55d1c7c1fc3c249395d261eb723c381843bc0"}}
- :aliases {:dev {:extra-paths ["dev"]}}}
+            :git/sha "24d55d1c7c1fc3c249395d261eb723c381843bc0"}
+           ;; db
+           datalevin/datalevin   {:mvn/version "0.9.17"}}
+ :aliases {:dev {:extra-paths ["dev"]
+                 :jvm-opts
+                 ["-Duser.timezone=UTC"
+                  "-XX:+UseZGC"
+                  ;; ZGenerational will be the default in future
+                  ;; so this won't need to be specified
+                  "-XX:+ZGenerational"
+                  "--add-opens=java.base/java.nio=ALL-UNNAMED"
+                  "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED"]}}}

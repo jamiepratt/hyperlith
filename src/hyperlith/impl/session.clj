@@ -13,12 +13,12 @@
       (cond
         ;; User already has session
         sid
-        (handler (assoc req :session/id sid))
+        (handler (assoc req :sid sid))
 
         ;; :get request and user does not have session we create one
         (= (:request-method req) :get)
         (let [new-sid (when-not sid (u/random-unguessable-uid))]
-          (-> (handler (assoc req :session/id new-sid))
+          (-> (handler (assoc req :sid new-sid))
             (assoc-in [:headers "Set-Cookie"]
               ;; This cookie won't be set on local host on chrome as
               ;; it's using secure needs to be true and local host
