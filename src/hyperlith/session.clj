@@ -30,5 +30,5 @@
 
         ;; not a :get request and user does not have session we redirect
         :else
-        {:status 303 :headers {"Location" "/"}}))))
+        {:status 403}))))
 
