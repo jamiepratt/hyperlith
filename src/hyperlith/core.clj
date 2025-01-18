@@ -85,16 +85,16 @@
 (defn- refresh-all! []
   (run! (fn [f] (f)) (vals @connections_)))
 
-;;; - PUBLIC API -
-
-;; DB
-(defn create-db [name schema]
+(defn- create-db [name schema]
   (d/get-conn name schema
     {:validate-data?    true
      :closed-schema?    true
      ;; Adds created-at and updated-at
      :auto-entity-time? true}))
 
+;;; - PUBLIC API -
+
+;; DB
 (defn new-uid
   "Allows us to change id implementation if need be."
   []
@@ -154,11 +154,14 @@
        (fn on-close [ch _] (swap! connections_ dissoc ch))})))
 
 ;; APP
-(defn start-app [{:keys [routes not-found-handler port db]}]
-  (d/listen! db :refresh-on-change
-    (fn [_] (refresh-all!)))
-  (-> (router db routes not-found-handler)
-    wrap-session
-    (hk/run-server {:port (or port 8080)})))
-
-;; TODO csrf
+(defn start-app [{:keys [routes not-found-handler port schema]}]
+  (let [db          (create-db "db" schema)
+        stop-server (-> (router db routes not-found-handler)
+                      wrap-session
+                      (hk/run-server {:port (or port 8080)}))]
+    (d/listen! db :refresh-on-change
+      (fn [_] (refresh-all!)))
+    {:db-conn db
+     :stop    (fn stop [] 
+                (d/close db)
+                (stop-server))}))
