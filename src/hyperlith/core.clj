@@ -8,19 +8,18 @@
             [clojure.string :as str])
   (:import (java.io InputStream)))
 
-(def doctype-html5 "<!DOCTYPE html>")
+;;; - INTERNAL -
 
-(defmacro html-str [hiccup]
-  `(-> (h/html ~hiccup) str))
+(def ^:private doctype-html5 "<!DOCTYPE html>")
 
-(def datastar-source-map
+(def ^:private datastar-source-map
   {:status  200
    :headers (assoc default-headers
               "Content-Type"     "text/javascript"
               "Content-Encoding" "gzip")
    :body    (-> "datastar.js.map" io/resource slurp u/gzip)})
 
-(def datastar
+(def ^:private datastar
   {:path    "/datastar-v1.0.0-beta.1.js"
    :status  200
    :headers (assoc default-headers
@@ -28,36 +27,24 @@
               "Content-Encoding" "gzip")
    :body    (-> "datastar.js" io/resource slurp u/gzip)})
 
-(def icon
+(def ^:private icon
   {:path    "/icon.png"
    :status  200
    :headers (assoc default-headers "Content-Type" "image/png")
    :body    (-> "icon.png" io/resource io/input-stream
               InputStream/.readAllBytes)})
 
-(def default-routes
+(def ^:private default-routes
   {[:get (datastar :path)]   (fn [_] datastar)
    [:get "/datastar.js.map"] (fn [_] datastar-source-map)
    [:get (icon :path)]       (fn [_] icon)})
 
-(defn router [routes not-found-handler]
-  (let [routes            (merge default-routes routes)
-        default-handler   (fn [_] {:status 303 :headers {"Location" "/"}})
-        not-found-handler (or not-found-handler default-handler)]
-    (fn [req]
-      ((routes [(:request-method req) (:uri req)] not-found-handler) req))))
-
-(defn start-app [{:keys [routes not-found-handler port]}]
-  (-> (router routes not-found-handler)
-    wrap-session
-    (hk/run-server {:port (or port 8080)})))
-
-(defn merge-fragments [fragments]
+(defn- merge-fragments [fragments]
   (str "event: datastar-merge-fragments\ndata: fragments "
               (str/replace fragments "\n" "\ndata: fragments ")
               "\n\n\n"))
 
-(defn send! [ch event close-after-send?]
+(defn- send! [ch event close-after-send?]
   (hk/send! ch {:status  200
                 :headers (assoc default-headers
                            "Content-Type"  "text/event-stream"
@@ -65,11 +52,11 @@
                 :body    event}
     close-after-send?))
 
-(defn build-shim-page-resp [{:keys [path]}]
+(defn- build-shim-page-resp [{:keys [path]}]
   {:status  200
    :headers (assoc default-headers "Content-Encoding" "gzip")
    :body
-   (->> (html-str
+   (->> (h/html
           [:html  {:lang "en"}
            [:head
             [:meta {:charset "UTF-8"}]
@@ -89,6 +76,25 @@
      (str doctype-html5)
      u/gzip)})
 
+(def ^:private connections_ (atom {}))
+
+;;; - PUBLIC API - 
+
+(defmacro html-str [hiccup]
+  `(-> (h/html ~hiccup) str))
+
+(defn router [routes not-found-handler]
+  (let [routes            (merge default-routes routes)
+        default-handler   (fn [_] {:status 303 :headers {"Location" "/"}})
+        not-found-handler (or not-found-handler default-handler)]
+    (fn [req]
+      ((routes [(:request-method req) (:uri req)] not-found-handler) req))))
+
+(defn start-app [{:keys [routes not-found-handler port]}]
+  (-> (router routes not-found-handler)
+    wrap-session
+    (hk/run-server {:port (or port 8080)})))
+
 (defn shim-handler [opts]
   (let [resp (build-shim-page-resp opts)]
     (fn handler [_req] resp)))
@@ -100,8 +106,6 @@
       true  thunk)
     {:status  204
      :headers default-headers}))
-
-(def connections_ (atom {}))
 
 (defn render-handler [render-fn]
   (fn handler [req]

@@ -1,14 +1,14 @@
 (ns example
   (:gen-class)
-  (:require [hyperlith.core :as l]))
+  (:require [hyperlith.core :as h]))
 
 (defonce state_
   (let [state_ (atom {:messages []})]
-    (add-watch state_ :refresh-on-change (fn [& _] (l/refresh-all!)))
+    (add-watch state_ :refresh-on-change (fn [& _] (h/refresh-all!)))
     state_))
 
 (defn render-home [_req]
-  (l/html-str
+  (h/html-str
     [:main#morph
      [:div
       (for [message (@state_ :messages)]
@@ -22,12 +22,12 @@
   (swap! state_ update :messages conj (-> req :body :message)))
 
 (def routes
-  {[:get "/"]         (l/shim-handler   {:path "/"})
-   [:post "/updates"] (l/render-handler #'render-home)
-   [:post "/submit"]  (l/action-handler #'action-change-message)})
+  {[:get "/"]         (h/shim-handler   {:path "/"})
+   [:post "/updates"] (h/render-handler #'render-home)
+   [:post "/submit"]  (h/action-handler #'action-change-message)})
 
 (defn -main [& _]
-  (l/start-app {:routes routes}))
+  (h/start-app {:routes routes}))
 
 ;; csrf
 
