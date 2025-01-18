@@ -1,0 +1,10 @@
+{:paths   ["src" "resources"]
+ :deps    {org.clojure/clojure   {:mvn/version "1.12.0"}
+           org.clojure/data.json {:mvn/version "2.5.1"}
+           http-kit/http-kit ;; http
+           {:git/url "https://github.com/http-kit/http-kit"
+            :git/sha "76b869fc34536ad0c43afa9a98d971a0fc32c644"}
+           hiccup/hiccup ;; templating
+           {:git/url "https://github.com/weavejester/hiccup"
+            :git/sha "24d55d1c7c1fc3c249395d261eb723c381843bc0"}}
+ :aliases {:dev {:extra-paths ["dev"]}}}
