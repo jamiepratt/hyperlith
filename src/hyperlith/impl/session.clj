@@ -46,5 +46,5 @@
           :else
           {:status 403})))))
 
-(def get-csrf-cookie-expr
+(def csrf-cookie-js
   "document.cookie.match(/(^| )__Host-csrf=([^;]+)/)?.[2]")

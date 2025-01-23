@@ -35,7 +35,7 @@
 (def routes
   {[:get "/"]         (h/shim-handler   {:path "/"})
    [:post "/updates"] (h/render-handler #'render-home)
-   [:post "/send"]  (h/action-handler #'action-send-message)})
+   [:post "/send"]    (h/action-handler #'action-send-message)})
 
 (defn -main [& _]
   (h/start-app

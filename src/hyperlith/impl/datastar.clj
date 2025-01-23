@@ -1,6 +1,6 @@
 (ns hyperlith.impl.datastar
   (:require [hyperlith.impl.headers :refer [default-headers]]
-            [hyperlith.impl.session :refer [get-csrf-cookie-expr]]
+            [hyperlith.impl.session :refer [csrf-cookie-js]]
             [hyperlith.impl.gzip :refer [gzip]]            
             [clojure.string :as str]
             [clojure.java.io :as io]
@@ -48,7 +48,7 @@
             [:meta {:name    "viewport"
                     :content "width=device-width, initial-scale=1.0"}]]
            [:body
-            [:div {:data-signals-csrf get-csrf-cookie-expr}]
+            [:div {:data-signals-csrf csrf-cookie-js}]
             [:div {:data-on-load
                    (str "@post('" (if (= path "/") "" path) "/updates')")}]
             [:noscript "Your browser does not support JavaScript!"]
