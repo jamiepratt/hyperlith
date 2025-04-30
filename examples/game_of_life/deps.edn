@@ -1,7 +1,9 @@
 {:paths   ["src" "resources"]
- :deps    {org.clojure/clojure {:mvn/version "1.12.0"}
-           hyperlith/hyperlith {:git/url "https://github.com/andersmurphy/hyperlith.git"
-                                :git/sha "6e8341ad44a62907090c1e2953bb20da2b20da68"}}
+ :deps    {cider/cider-nrepl {:mvn/version "0.52.1"}
+           org.clojure/clojure {:mvn/version "1.12.0"}
+           hyperlith/hyperlith {:git/url "https://github.com/jamiepratt/hyperlith.git"
+                                :git/sha "49de2aa8fd1ec9f0c3e55ff73856d6cd332963bb"}}
  :aliases {:build {:deps       {io.github.clojure/tools.build
                                 {:git/tag "v0.10.5" :git/sha "2a21b7a"}}
-                   :ns-default build}}}
+                   :ns-default build}
+ }}

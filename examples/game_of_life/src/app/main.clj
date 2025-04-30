@@ -2,10 +2,12 @@
   (:gen-class)
   (:require [clojure.pprint :as pprint]
             [hyperlith.core :as h]
-            [app.game :as game]))
+            [app.game :as game]
+            [nrepl.server :as nrepl-server]
+            [cider.nrepl :refer (cider-nrepl-handler)]))
 
-(def board-size 100)
-(def board-size-px 1800)
+(def board-size 50)
+(def board-size-px 900)
 (def chunk-size 50)
 
 (def colors
@@ -27,20 +29,13 @@
          :color       black}]
 
        [:.main
-        {:height         :100dvh
-         :width          "min(100% - 2rem , 30rem)"
+        {:height         "100%"
+         :width          "100%"
          :margin-inline  :auto
          :padding-block  :2dvh
          :display        :flex
          :gap            :5px
          :flex-direction :column}]
-
-       [:.view
-        {:margin-inline   :auto
-         :overflow        :scroll
-         :overflow-anchor :none
-         :width           "min(100% - 2rem , 30rem)"
-         :aspect-ratio    "1/1"}]
 
        [:.board
         {:background            :white
@@ -52,7 +47,7 @@
 
        [:.old-board
         {:background :white
-         :width                 "min(100% - 2rem , 30rem)"
+         :width                 "100%"
          :display               :grid
          :aspect-ratio          "1/1"
          :grid-template-rows    (str "repeat(" chunk-size ", 1fr)")
@@ -110,15 +105,11 @@
     (subvec board-state y (min (+ y chunk-size) board-size))))
 
 (defn game-view [snapshot sid]
-  (let [user (get-in snapshot [:users sid])
-        view (user-view user (board-state snapshot))]
+  (let [view (board-state snapshot)]
     (h/html
-      [:div#view.view
-       {:data-on-scroll__debounce.100ms
-        "@post(`/scroll?x=${el.scrollLeft}&y=${el.scrollTop}`)"}
-       [:div.board
-        {:data-on-mousedown "@post(`/tap?id=${evt.target.dataset.id}`)"}
-        view]])))
+      [:div.board
+       {:data-on-mousedown "@post(`/tap?id=${evt.target.dataset.id}`)"}
+       view])))
 
 (defn render-home [{:keys [db sid] :as _req}]
   (let [snapshot @db]
@@ -235,6 +226,7 @@
      :game-stop (start-game! db_)}))
 
 (defn -main [& _]
+  (nrepl-server/start-server :bind "fly-local-6pn" :port 5555 :handler cider-nrepl-handler)
   (h/start-app
     {:router         #'router
      :max-refresh-ms 200

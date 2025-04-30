@@ -2,7 +2,9 @@
   (:gen-class)
   (:require [clojure.pprint :as pprint]
             [hyperlith.core :as h]
-            [app.game :as game]))
+            [app.game :as game]
+            [nrepl.server :as nrepl-server]
+            [cider.nrepl :refer (cider-nrepl-handler)]))
 
 (def board-size 100)
 (def board-size-px 1800)
@@ -235,6 +237,7 @@
      :game-stop (start-game! db_)}))
 
 (defn -main [& _]
+  (nrepl-server/start-server :port 5555 :handler cider-nrepl-handler)
   (h/start-app
     {:router         #'router
      :max-refresh-ms 200
